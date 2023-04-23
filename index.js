@@ -21,6 +21,7 @@ function addEventListenerToElement(element, key, value) {
 
 function createElement(type, props = {}, children = []) {
   var element = null;
+
   if (typeof type === "function") {
     curIdx = 0;
     currentHooks = [];
@@ -118,21 +119,29 @@ function useEffect(callback, states) {
 
   let update = false;
 
-  if (prevStates) {
+  if (prevStates && prevStates.values) {
     update = states.reduce((init, cur, idx) => {
       if (init === true) {
         return init;
       } else {
-        return cur !== prevStates[idx];
+        return cur !== prevStates.values[idx];
       }
     }, false);
   }
 
-  componentHooks[idx] = prevStates;
+  componentHooks[idx] = {
+    values: states,
+    callback: componentHooks[idx]?.callback,
+  };
 
-  if (update || !prevStates) {
-    callback();
-    rerenderVDom();
+  if (update || !prevStates || !prevStates.values) {
+    if (componentHooks[idx].callback) {
+      componentHooks[idx].callback();
+    }
+    componentHooks[idx].callback = callback();
+    if (update) {
+      rerenderVDom();
+    }
   }
 }
 
