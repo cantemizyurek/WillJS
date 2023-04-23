@@ -149,96 +149,39 @@ function createWillJS(element) {
 
 ////////////////////////////////////////////////////////
 //* App
-function Task({ task, onToggle, onDelete }) {
-  return createElement(
-    "div",
-    {
-      style: `text-decoration: ${task.completed ? "line-through" : "none"}`,
-    },
-    [
-      createElement("input", {
-        type: "checkbox",
-        checked: task.completed,
-        onchange: () => onToggle(task.id),
-      }),
-      task.text,
-      createElement(
-        "button",
-        {
-          onclick: () => onDelete(task.id),
-          style: "margin-left: 10px;",
-        },
-        ["Delete"]
-      ),
-    ]
-  );
+
+function useCounter() {
+  let [count, setCount] = useState(0);
+
+  return [
+    count,
+    () => setCount((count) => count + 1),
+    () => setCount((count) => count - 1),
+  ];
 }
 
-function TaskList() {
-  const [tasks, setTasks] = useState([]);
-
-  function addTask(text) {
-    setTasks((prevTasks) => [
-      ...prevTasks,
-      { id: Date.now(), text, completed: false },
-    ]);
-  }
-
-  function toggleTask(id) {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  }
-
-  function deleteTask(id) {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-  }
-
-  const taskItems = tasks.map((task) =>
-    createElement(Task, {
-      key: task.id,
-      task,
-      onToggle: toggleTask,
-      onDelete: deleteTask,
-    })
-  );
+function Counter() {
+  const [count, increment, decrement] = useCounter();
 
   return createElement("div", {}, [
-    createElement(NewTaskForm, { onAdd: addTask }),
-    createElement("div", {}, taskItems),
+    createElement(
+      "button",
+      {
+        onclick: decrement,
+      },
+      ["-"]
+    ),
+    createElement("span", {}, [count]),
+    createElement(
+      "button",
+      {
+        onclick: increment,
+      },
+      ["+"]
+    ),
   ]);
 }
 
-function NewTaskForm({ onAdd }) {
-  const [inputValue, setInputValue] = useState("");
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (inputValue.trim()) {
-      onAdd(inputValue.trim());
-      setInputValue("");
-    }
-  }
-
-  return createElement(
-    "form",
-    {
-      onsubmit: handleSubmit,
-    },
-    [
-      createElement("input", {
-        type: "text",
-        value: inputValue,
-        oninput: (e) => setInputValue(e.target.value),
-        placeholder: "Enter a task",
-      }),
-      createElement("button", { type: "submit" }, ["Add Task"]),
-    ]
-  );
-}
-
-const App = () => createElement(TaskList);
+const App = () => createElement(Counter);
 
 createWillJS(App);
