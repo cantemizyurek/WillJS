@@ -35,13 +35,11 @@ function createElement(type, props = {}, children = []) {
   element = document.createElement(type);
 
   Object.keys(props).forEach((key) => {
-    Object.keys(props).forEach((key) => {
-      if (key.startsWith("on") && typeof props[key] === "function") {
-        addEventListenerToElement(element, key, props[key]);
-      } else {
-        element[key] = props[key];
-      }
-    });
+    if (key.startsWith("on") && typeof props[key] === "function") {
+      addEventListenerToElement(element, key, props[key]);
+    } else {
+      element[key] = props[key];
+    }
   });
 
   element.append(...children);
