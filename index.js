@@ -42,7 +42,7 @@ function createElement(type, props = {}, children = []) {
     }
   });
 
-  element.append(...children);
+  element.append(...children.filter((child) => child !== null));
 
   return element;
 }
@@ -164,6 +164,16 @@ function useCounter() {
 function Counter() {
   const [count, increment, decrement, set] = useCounter();
 
+  function displayText() {
+    if (count > 0) {
+      return createElement("p", {}, ["Higher Than 0"]);
+    } else if (count < 0) {
+      return createElement("p", {}, ["Lower Than 0"]);
+    } else {
+      return createElement("p", {}, ["Number 0"]);
+    }
+  }
+
   return createElement("div", {}, [
     createElement(
       "button",
@@ -184,6 +194,7 @@ function Counter() {
       },
       ["+"]
     ),
+    displayText(),
   ]);
 }
 
