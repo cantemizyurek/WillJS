@@ -157,11 +157,12 @@ function useCounter() {
     count,
     () => setCount((count) => count + 1),
     () => setCount((count) => count - 1),
+    (val) => setCount(Number(val)),
   ];
 }
 
 function Counter() {
-  const [count, increment, decrement] = useCounter();
+  const [count, increment, decrement, set] = useCounter();
 
   return createElement("div", {}, [
     createElement(
@@ -171,7 +172,11 @@ function Counter() {
       },
       ["-"]
     ),
-    createElement("span", {}, [count]),
+    createElement(
+      "input",
+      { value: count, oninput: (e) => set(e.target.value) },
+      [count]
+    ),
     createElement(
       "button",
       {
