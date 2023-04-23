@@ -103,7 +103,9 @@ function useState(init) {
       componentHooks[idx] = newVal;
     }
 
-    requestAnimationFrame(rerenderVDom);
+    if (rerenderVDom) {
+      requestAnimationFrame(rerenderVDom);
+    }
   }
 
   return [val, setState];
@@ -137,9 +139,6 @@ function useEffect(callback, states) {
       componentHooks[idx].callback();
     }
     componentHooks[idx].callback = callback();
-    if (update) {
-      rerenderVDom();
-    }
   }
 }
 
